@@ -19,6 +19,7 @@ public class Calc{
 
         textField.setPreferredSize(new Dimension(200, 200));
         textField.setEditable(false);
+        textField.setFont(new Font("Courier", Font.PLAIN, 50));
         for(int i = 0; i<elements.length; i++){
             JButton button = new JButton(elements[i]);
             button.addActionListener(buttonListener);
@@ -36,8 +37,8 @@ public class Calc{
 
     private void add(StringBuilder lastNumber, String equation, StringBuilder number){
         if(lastNumber.length()>0 && equation.length()==1){
-            int a = Integer.parseInt(lastNumber.toString());
-            int b = Integer.parseInt(number.toString());
+            int a = Integer.parseInt(number.toString());
+            int b = Integer.parseInt(lastNumber.toString());
             int result = 0;
             switch(equation){
                 case "+": result = a + b; break;
@@ -45,7 +46,6 @@ public class Calc{
                 case "*": result = a * b; break;
                 case "/": result = a / b;
             }
-            lastNumber.delete(0, lastNumber.length());
             number.delete(0, number.length());
             number.append(result);
             textField.setText(number.toString());
@@ -65,8 +65,12 @@ public class Calc{
             JButton button = (JButton) e.getSource();
             String text = button.getText();
             if(text.equals("+") || text.equals("-") || text.equals("*") || text.equals("/")){
+                if(isLastResult){
+                    lastNumber.delete(0, lastNumber.length());
+                }
                 if(equation.length()==1 && lastNumber.length()>0){
                     add(lastNumber, equation, number);
+                    lastNumber.delete(0, lastNumber.length());
                 }
                 equation = text;
                 isLastNumber = false;
@@ -77,19 +81,14 @@ public class Calc{
 
             }
             else if(text.equals("=")){
-                if(!isLastNumber){
-                    lastNumber.delete(0, lastNumber.length());
-                    lastNumber.append(number.toString());
-                    add(lastNumber, equation, number);
-                } else{
-                    add(lastNumber, equation, number);
-                }
+                add(lastNumber, equation, number);
                 isLastNumber = false;
                 isLastEquation = false;
                 isLastResult = true;
             }
             else{
-                if(isLastResult && !isLastEquation){
+                if(isLastResult){
+                    lastNumber.delete(0, lastNumber.length());
                     number.delete(0, number.length());
                     equation = "";
                 }
