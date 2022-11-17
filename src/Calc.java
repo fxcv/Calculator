@@ -35,10 +35,10 @@ public class Calc{
         frame.setVisible(true);
     }
 
-    private void add(StringBuilder lastNumber, String equation, StringBuilder number){
-        if(lastNumber.length()>0 && equation.length()==1){
-            int a = Integer.parseInt(number.toString());
-            int b = Integer.parseInt(lastNumber.toString());
+    private void add(StringBuilder number1, String equation, StringBuilder number2){
+        if(number2.length()>0 && equation.length()==1){
+            int a = Integer.parseInt(number1.toString());
+            int b = Integer.parseInt(number2.toString());
             int result = 0;
             switch(equation){
                 case "+": result = a + b; break;
@@ -46,63 +46,64 @@ public class Calc{
                 case "*": result = a * b; break;
                 case "/": result = a / b;
             }
-            number.delete(0, number.length());
-            number.append(result);
-            textField.setText(number.toString());
+            number1.delete(0, number1.length());
+            number1.append(result);
+            textField.setText(number1.toString());
         }
     }
 
     private class buttonListener implements ActionListener{
         private String equation = "";
-        private StringBuilder number = new StringBuilder();
-        private StringBuilder lastNumber = new StringBuilder();
+        private StringBuilder number1 = new StringBuilder();
+        private StringBuilder number2 = new StringBuilder();
         private boolean isLastResult = false;
-        private boolean isLastNumber = false;
-        private boolean isLastEquation = false;
 
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton) e.getSource();
             String text = button.getText();
             if(text.equals("+") || text.equals("-") || text.equals("*") || text.equals("/")){
-                if(isLastResult){
-                    lastNumber.delete(0, lastNumber.length());
+                if(number1.length()>0){
+                    if(isLastResult){
+                        number2.delete(0, number2.length());
+                    }
+                    else if(number2.length()>0 && equation.length()>0){
+                        add(number1, equation, number2);
+                        number2.delete(0, number2.length());
+                    }
+                    equation = text;
+                    isLastResult = false;
                 }
-                if(equation.length()==1 && lastNumber.length()>0){
-                    add(lastNumber, equation, number);
-                    lastNumber.delete(0, lastNumber.length());
-                }
-                equation = text;
-                isLastNumber = false;
-                isLastEquation = true;
-                isLastResult = false;
             }
             else if(text.equals("C")){
-
+                reset();
+                textField.setText("");
             }
             else if(text.equals("=")){
-                add(lastNumber, equation, number);
-                isLastNumber = false;
-                isLastEquation = false;
+                add(number1, equation, number2);
                 isLastResult = true;
             }
             else{
                 if(isLastResult){
-                    lastNumber.delete(0, lastNumber.length());
-                    number.delete(0, number.length());
-                    equation = "";
+                    reset();
+                    number1.append(text);
+                    textField.setText(number1.toString());
                 }
-                else if(number.length()>0 && !isLastNumber){
-                    lastNumber.delete(0, lastNumber.length());
-                    lastNumber.append(number.toString());
-                    number.delete(0, number.length());
+                else if(equation.length() == 0){
+                    number1.append(text);
+                    textField.setText(number1.toString());
                 }
-                number.append(text);
-                textField.setText(number.toString());
-                isLastNumber = true;
-                isLastEquation = false;
+                else{
+                    number2.append(text);
+                    textField.setText(number2.toString());
+                }
                 isLastResult = false;
             }
+        }
+        private void reset(){
+            number1.delete(0, number1.length());
+            number2.delete(0, number2.length());
+            equation = "";
         }
     }
 }
