@@ -36,20 +36,26 @@ public class Calc{
     }
 
     private void add(StringBuilder number1, String equation, StringBuilder number2){
-        if(number2.length()>0 && equation.length()==1){
-            int a = Integer.parseInt(number1.toString());
-            int b = Integer.parseInt(number2.toString());
-            int result = 0;
-            switch(equation){
-                case "+": result = a + b; break;
-                case "-": result = a - b; break;
-                case "*": result = a * b; break;
-                case "/": result = a / b;
+        int result = 0;
+        try{
+            if(number2.length()>0 && equation.length()==1){
+                int a = Integer.parseInt(number1.toString());
+                int b = Integer.parseInt(number2.toString());
+                switch(equation){
+                    case "+": result = a + b; break;
+                    case "-": result = a - b; break;
+                    case "*": result = a * b; break;
+                    case "/": result = a / b;
+                }
             }
+        } catch (ArithmeticException ex){
+            System.out.println("Nie dziel przez 0");
+        } finally{
             number1.delete(0, number1.length());
             number1.append(result);
             textField.setText(number1.toString());
         }
+
     }
 
     private class buttonListener implements ActionListener{
