@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class Calc{
     private JTextField textField;
-    private String[] elements = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-", "*", "/", "C", "="};
+    private String[] elements = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-", "*", "/", "C", "=", "."};
     public void go(){
         setUpGui();
     }
@@ -17,6 +17,8 @@ public class Calc{
         JPanel box = new JPanel();
         textField = new JTextField("");
 
+        box.setBackground(Color.GRAY);
+        textField.setBackground(Color.LIGHT_GRAY);
         textField.setPreferredSize(new Dimension(200, 200));
         textField.setEditable(false);
         textField.setFont(new Font("Courier", Font.PLAIN, 50));
@@ -26,8 +28,8 @@ public class Calc{
             button.setPreferredSize(new Dimension(150, 100));
             box.add(button);
         }
-        frame.add(BorderLayout.NORTH, textField);
-        frame.add(BorderLayout.CENTER, box);
+        c.add(BorderLayout.NORTH, textField);
+        c.add(BorderLayout.CENTER, box);
         frame.setSize(600, 900);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,11 +38,11 @@ public class Calc{
     }
 
     private void add(StringBuilder number1, String equation, StringBuilder number2){
-        int result = 0;
+        double result = 0;
         try{
             if(number2.length()>0 && equation.length()==1){
-                int a = Integer.parseInt(number1.toString());
-                int b = Integer.parseInt(number2.toString());
+                double a = Double.parseDouble(number1.toString());
+                double b = Double.parseDouble(number2.toString());
                 switch(equation){
                     case "+": result = a + b; break;
                     case "-": result = a - b; break;
@@ -96,12 +98,18 @@ public class Calc{
                     textField.setText(number1.toString());
                 }
                 else if(equation.length() == 0){
-                    number1.append(text);
-                    textField.setText(number1.toString());
+                    if(number1.toString().contains(".") && text.equals(".")){ }
+                    else{
+                        number1.append(text);
+                        textField.setText(number1.toString());
+                    }
                 }
                 else{
-                    number2.append(text);
-                    textField.setText(number2.toString());
+                    if(number2.toString().contains(".") && text.equals(".")){ }
+                    else{
+                        number2.append(text);
+                        textField.setText(number2.toString());
+                    }
                 }
                 isLastResult = false;
             }
